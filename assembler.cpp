@@ -265,3 +265,4 @@ void xor_memory_word(unsigned short memLocation, unsigned short word) {
     memory[memLocation+1] = memWordHigh;
     memory[memLocation] = memWordLow;
 }
+

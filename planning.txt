@@ -2,7 +2,7 @@
     RI*
     MI*
     MR*
-    RM
+    RM*
     RR
 
     FLAGS
@@ -27,7 +27,16 @@
 
 -div
 
--xor/or/and/not
+-xor/or/and/
+
+    RR
+    RM
+    MR
+    RI
+    MI
+
+-not
+
 
 -rcl/rcr
 

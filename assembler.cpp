@@ -25,6 +25,13 @@ unsigned char *pdl = (unsigned char *) &dx;
 
 bool ZF, CF, AF, SF, OF;
 
+
+unsigned short byte_to_word(unsigned byteHigh, unsigned byteLow) {
+    unsigned short word = ( ( byteHigh & 0xFF ) << 8 ) | ( byteLow & 0xFF );
+    return word;
+}
+
+
 //MOV methods by operand types
 template <typename regtype>
 void mov_reg_word (regtype *preg, unsigned short word) {
@@ -39,13 +46,13 @@ void mov_reg_reg (regtype *preg1, regtype *preg2) {
     *preg1 = *preg2;
 }
 template <typename regtype>
-void mov_reg_mem_word (regtype *preg, unsigned short wordLocation) {
-    unsigned short word = ( ( memory[wordLocation] & 0xFF ) << 8 ) | ( memory[wordLocation+1] & 0xFF );
+void mov_reg_mem_word (regtype *preg, unsigned short memLocation) {
+    unsigned short word = byte_to_word(memory[memLocation+1], memory[memLocation]);
     *preg = word;
 }
 template <typename regtype>
-void mov_reg_mem_byte (regtype *preg, unsigned short byteLocation) {
-    *preg = memory[byteLocation];
+void mov_reg_mem_byte (regtype *preg, unsigned short memLocation) {
+    *preg = memory[memLocation];
 }
 void mov_mem_byte (unsigned short memLocation, unsigned char byte) {
     memory[memLocation] = byte;
@@ -81,7 +88,7 @@ void add_mem_byte(unsigned short memLocation, unsigned char byte) {
     memory[memLocation] += byte;
 }
 void add_mem_word(unsigned short memLocation, unsigned short word) {
-    unsigned short memWord = ( ( memory[memLocation] & 0xFF ) << 8 ) | ( memory[memLocation+1] & 0xFF );
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
     memWord += word;
     unsigned char memWordLow = memWord & 0xff;
     unsigned char memWordHigh = (memWord >> 8);
@@ -94,7 +101,7 @@ void add_mem_byte_register(unsigned short memLocation, regtype *preg) {
 }
 template <typename regtype>
 void add_mem_word_register(unsigned short memLocation, regtype *preg) {
-    unsigned short memWord = ( ( memory[memLocation] & 0xFF ) << 8 ) | ( memory[memLocation+1] & 0xFF );
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
     memWord += *preg;
     unsigned char memWordLow = memWord & 0xff;
     unsigned char memWordHigh = (memWord >> 8);
@@ -108,4 +115,153 @@ void add_register_byte_mem(regtype *preg, unsigned short memLocation) {
 template <typename regtype>
 void add_register_word_mem(regtype *preg, unsigned short memLocation) {
     *preg += memory[memLocation];
+}
+
+template <typename regtype>
+void add_register_register(regtype *preg1, regtype *preg2) {
+    *preg1 += *preg2;
+}
+
+//AND methods by operand types
+template <typename regtype>
+void and_register_register(regtype *preg1, regtype *preg2) {
+    *preg1 = *preg1 & *preg2;
+}
+template <typename regtype>
+void and_register_byte_memory(regtype *preg, unsigned short memLocation) {
+    *preg = *preg & memory[memLocation];
+}
+template <typename regtype>
+void and_register_word_memory(regtype *preg, unsigned short memLocation) {
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
+    *preg = *preg & memWord;
+}
+template <typename regtype>
+void and_memory_byte_register(regtype *preg, unsigned short memLocation) {
+    memory[memLocation] = memory[memLocation] & *preg;
+}
+template <typename regtype>
+void and_memory_word_register(regtype *preg, unsigned short memLocation) {
+    memory[memLocation] = memory[memLocation] & *preg;
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
+    memWord = memWord & *preg;
+    unsigned char memWordLow = memWord & 0xff;
+    unsigned char memWordHigh = (memWord >> 8);
+    memory[memLocation] = memWordLow;
+    memory[memLocation+1] = memWordHigh;
+}
+template <typename regtype>
+void and_register_byte(regtype *preg, unsigned char byte) {
+    *preg = *preg & byte;
+}
+template <typename regtype>
+void and_register_word(regtype *preg, unsigned short word) {
+    *preg = *preg & word;
+}
+void and_memory_byte(unsigned short memLocation, unsigned char byte) {
+    memory[memLocation] = memory[memLocation] & byte;
+}
+void and_memory_word(unsigned short memLocation, unsigned short word) {
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
+    memWord = memWord & word;
+    unsigned char memWordLow = memWord & 0xff;
+    unsigned char memWordHigh = (memWord >> 8);
+    memory[memLocation+1] = memWordHigh;
+    memory[memLocation] = memWordLow;
+}
+
+//OR
+template <typename regtype>
+void or_register_register(regtype *preg1, regtype *preg2) {
+    *preg1 = *preg1 | *preg2;
+}
+template <typename regtype>
+void or_register_byte_memory(regtype *preg, unsigned short memLocation) {
+    *preg = *preg | memory[memLocation];
+}
+template <typename regtype>
+void or_register_word_memory(regtype *preg, unsigned short memLocation) {
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
+    *preg = *preg | memWord;
+}
+template <typename regtype>
+void or_memory_byte_register(regtype *preg, unsigned short memLocation) {
+    memory[memLocation] = memory[memLocation] | *preg;
+}
+template <typename regtype>
+void or_memory_word_register(regtype *preg, unsigned short memLocation) {
+    memory[memLocation] = memory[memLocation] & *preg;
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
+    memWord = memWord | *preg;
+    unsigned char memWordLow = memWord & 0xff;
+    unsigned char memWordHigh = (memWord >> 8);
+    memory[memLocation] = memWordLow;
+    memory[memLocation+1] = memWordHigh;
+}
+template <typename regtype>
+void or_register_byte(regtype *preg, unsigned char byte) {
+    *preg = *preg | byte;
+}
+template <typename regtype>
+void or_register_word(regtype *preg, unsigned short word) {
+    *preg = *preg | word;
+}
+void or_memory_byte(unsigned short memLocation, unsigned char byte) {
+    memory[memLocation] = memory[memLocation] | byte;
+}
+void or_memory_word(unsigned short memLocation, unsigned short word) {
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
+    memWord = memWord | word;
+    unsigned char memWordLow = memWord & 0xff;
+    unsigned char memWordHigh = (memWord >> 8);
+    memory[memLocation+1] = memWordHigh;
+    memory[memLocation] = memWordLow;
+}
+
+//XOR
+template <typename regtype>
+void xor_register_register(regtype *preg1, regtype *preg2) {
+    *preg1 = *preg1 ^ *preg2;
+}
+template <typename regtype>
+void xor_register_byte_memory(regtype *preg, unsigned short memLocation) {
+    *preg = *preg ^ memory[memLocation];
+}
+template <typename regtype>
+void xor_register_word_memory(regtype *preg, unsigned short memLocation) {
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
+    *preg = *preg ^ memWord;
+}
+template <typename regtype>
+void xor_memory_byte_register(regtype *preg, unsigned short memLocation) {
+    memory[memLocation] = memory[memLocation] ^ *preg;
+}
+template <typename regtype>
+void xor_memory_word_register(regtype *preg, unsigned short memLocation) {
+    memory[memLocation] = memory[memLocation] & *preg;
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
+    memWord = memWord ^ *preg;
+    unsigned char memWordLow = memWord & 0xff;
+    unsigned char memWordHigh = (memWord >> 8);
+    memory[memLocation] = memWordLow;
+    memory[memLocation+1] = memWordHigh;
+}
+template <typename regtype>
+void xor_register_byte(regtype *preg, unsigned char byte) {
+    *preg = *preg ^ byte;
+}
+template <typename regtype>
+void xor_register_word(regtype *preg, unsigned short word) {
+    *preg = *preg ^ word;
+}
+void xor_memory_byte(unsigned short memLocation, unsigned char byte) {
+    memory[memLocation] = memory[memLocation] ^ byte;
+}
+void xor_memory_word(unsigned short memLocation, unsigned short word) {
+    unsigned short memWord = byte_to_word(memory[memLocation+1], memory[memLocation]);
+    memWord = memWord ^ word;
+    unsigned char memWordLow = memWord & 0xff;
+    unsigned char memWordHigh = (memWord >> 8);
+    memory[memLocation+1] = memWordHigh;
+    memory[memLocation] = memWordLow;
 }

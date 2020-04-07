@@ -53,7 +53,7 @@ void mov_mem_byte (unsigned short memLocation, unsigned char byte) {
 void mov_mem_word (unsigned short memLocation, unsigned short word) {
     unsigned char wordLow = word & 0xff;
     unsigned char wordHigh = (word >> 8);
-    memory[memLocation] = wordHigh;
+    memory[memLocation+1] = wordHigh;
     memory[memLocation] = wordLow;
 }
 template <typename regtype>
@@ -64,8 +64,8 @@ template <typename regtype>
 void mov_mem_word_reg (regtype *preg, unsigned short memLocation) {
     unsigned char pregLow = *preg & 0xff;
     unsigned char pregHigh = (*preg >> 8);
-    memory[memLocation] = pregHigh;
-    memory[memLocation+1] = pregLow;
+    memory[memLocation+1] = pregHigh;
+    memory[memLocation] = pregLow;
 }
 
 //ADD methods by operand types
@@ -85,8 +85,8 @@ void add_mem_word(unsigned short memLocation, unsigned short word) {
     memWord += word;
     unsigned char memWordLow = memWord & 0xff;
     unsigned char memWordHigh = (memWord >> 8);
-    memory[memLocation] = memWordHigh;
-    memory[memLocation+1] = memWordLow;
+    memory[memLocation+1] = memWordHigh;
+    memory[memLocation] = memWordLow;
 }
 template <typename regtype>
 void add_mem_byte_register(unsigned short memLocation, regtype *preg) {
@@ -98,6 +98,14 @@ void add_mem_word_register(unsigned short memLocation, regtype *preg) {
     memWord += *preg;
     unsigned char memWordLow = memWord & 0xff;
     unsigned char memWordHigh = (memWord >> 8);
-    memory[memLocation] = memWordHigh;
-    memory[memLocation+1] = memWordLow;
+    memory[memLocation+1] = memWordHigh;
+    memory[memLocation] = memWordLow;
+}
+template <typename regtype>
+void add_register_byte_mem(regtype *preg, unsigned short memLocation) {
+    *preg += memory[memLocation];
+}
+template <typename regtype>
+void add_register_word_mem(regtype *preg, unsigned short memLocation) {
+    *preg += memory[memLocation];
 }

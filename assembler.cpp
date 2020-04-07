@@ -266,3 +266,15 @@ void xor_memory_word(unsigned short memLocation, unsigned short word) {
     memory[memLocation] = memWordLow;
 }
 
+//NOT
+template <typename regtype>
+void not_reg(regtype *preg) {
+    *preg = ~*preg;
+}
+void not_mem_byte(unsigned short memLocation) {
+    memory[memLocation] = ~memory[memLocation];
+}
+void not_mem_word(unsigned short memLocation) {
+    memory[memLocation] = ~memory[memLocation];
+    memory[memLocation+1] = ~memory[memLocation+1];
+}

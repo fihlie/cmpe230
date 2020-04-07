@@ -1,0 +1,44 @@
+-add 
+    RI*
+    MI*
+    MR*
+    RM
+    RR
+
+    FLAGS
+    AF, SF, OF, ZF, CF
+
+
+-sub
+    RI
+    MI
+    MR
+    RM
+    RR
+
+    FLAGS
+    AF, SF, OF, ZF, CF
+
+-inc/dec
+    R
+    M
+
+-mul
+
+-div
+
+-xor/or/and/not
+
+-rcl/rcr
+
+-shl/shr
+
+-push/pop
+
+-nop
+
+-cmp
+
+-jz/jnz/je/ja/jae/jb/jbe/jnae/jnb/jnbe/jnc/jc
+
+-int20h/21h

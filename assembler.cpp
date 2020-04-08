@@ -30,7 +30,7 @@ unsigned short byte_to_word(unsigned byteHigh, unsigned byteLow) {
     unsigned short word = ( ( byteHigh & 0xFF ) << 8 ) | ( byteLow & 0xFF );
     return word;
 }
-
+unsigned short rotate_left(unsigned short word, )
 
 //MOV methods by operand types
 template <typename regtype>
@@ -278,3 +278,4 @@ void not_mem_word(unsigned short memLocation) {
     memory[memLocation] = ~memory[memLocation];
     memory[memLocation+1] = ~memory[memLocation+1];
 }
+

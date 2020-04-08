@@ -35,7 +35,7 @@
     RI
     MI
 
--not
+-not*
 
 
 -rcl/rcr
